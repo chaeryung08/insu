@@ -6,19 +6,45 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>이미지 필터</h1>
 
-  <input type="file" id="upload" accept="image/*">
+  <div class="header">
+    <img src="images/rilakkuma.png" alt="리락쿠마">
+    <h1>이미지 필터</h1>
+  </div>
+  <p class="subtitle">이미지를 올리고 필터를 골라보세요</p>
 
-  <div class="filter-buttons">
-    <button data-name="edge">엣지 검출</button>
-    <button data-name="blur">블러</button>
-    <button data-name="sharpen">샤프닝</button>
+  <div class="upload-area">
+    <input type="file" id="upload" accept="image/*">
+    <div class="sample-buttons">
+      <button onclick="loadSample('circle')">샘플: 원</button>
+      <button onclick="loadSample('checker')">샘플: 체커</button>
+      <button onclick="loadSample('lines')">샘플: 격자선</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="filter-buttons">
+      <button data-name="edge" onclick="selectFilter('edge', this)">엣지 검출</button>
+      <button data-name="blur" onclick="selectFilter('blur', this)">블러</button>
+      <button data-name="sharpen" onclick="selectFilter('sharpen', this)">샤프닝</button>
+    </div>
+
+    <div class="kernel-edit" id="kernel-inputs"></div>
+
+    <div class="desc-box" id="filter-desc">
+      필터를 선택해보세요.
+    </div>
   </div>
 
   <div class="canvas-row">
-    <canvas id="srcCanvas" width="300" height="300"></canvas>
-    <canvas id="dstCanvas" width="300" height="300"></canvas>
+    <div class="canvas-panel">
+      <div class="label">원본</div>
+      <canvas id="srcCanvas" width="300" height="300"></canvas>
+    </div>
+    <div class="canvas-panel">
+      <div class="label">필터 결과</div>
+      <canvas id="dstCanvas" width="300" height="300"></canvas>
+    </div>
   </div>
 
   <script src="script.js"></script>
