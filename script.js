@@ -1,4 +1,5 @@
 const FILTERS = {
+  ribbon:     { type: 'face', desc: 'CNN 기반 얼굴 인식 모델(TinyFaceDetector)이 얼굴을 찾아서 리본을 달아줍니다' },
   edge:       { type: 'conv', k: [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]], divisor: 1, desc: '경계선을 강조하는 필터입니다' },
   blur:       { type: 'conv', k: [[1,1,1],[1,1,1],[1,1,1]],          divisor: 9, desc: '주변 9칸의 평균을 구해서 이미지를 흐립니다' },
   sharpen:    { type: 'conv', k: [[0,-1,0],[-1,5,-1],[0,-1,0]],      divisor: 1, desc: '윤곽을 선명하게 만듭니다' },
@@ -40,39 +41,17 @@ async function applyRibbonFilter() {
   detections.forEach(det => {
     const box = det.box;
     const ribbonX = box.x + box.width / 2;
-    const ribbonY = box.y - box.height * 0.12;
-    const ribbonSize = box.width * 0.35;
-    drawRibbon(ribbonX, ribbonY, ribbonSize);
+    const ribbonY = box.y - box.height * 0.05;
+    const fontSize = box.width * 0.5;
+
+    dstCtx.font = fontSize + 'px sans-serif';
+    dstCtx.textAlign = 'center';
+    dstCtx.textBaseline = 'middle';
+    dstCtx.fillText('🎀', ribbonX, ribbonY);
   });
 
   document.getElementById('filter-desc').innerHTML =
     '<b>ribbon:</b> 얼굴 ' + detections.length + '개를 인식해서 리본을 달았어요. (TinyFaceDetector는 MobileNet 기반의 경량 CNN입니다)';
-}
-
-function drawRibbon(x, y, size) {
-  dstCtx.save();
-  dstCtx.translate(x, y);
-
-  dstCtx.fillStyle = '#D4537E';
-
-  dstCtx.beginPath();
-  dstCtx.moveTo(0, 0);
-  dstCtx.quadraticCurveTo(-size, -size * 0.7, -size * 0.9, 0);
-  dstCtx.quadraticCurveTo(-size * 0.5, size * 0.25, 0, 0);
-  dstCtx.fill();
-
-  dstCtx.beginPath();
-  dstCtx.moveTo(0, 0);
-  dstCtx.quadraticCurveTo(size, -size * 0.7, size * 0.9, 0);
-  dstCtx.quadraticCurveTo(size * 0.5, size * 0.25, 0, 0);
-  dstCtx.fill();
-
-  dstCtx.beginPath();
-  dstCtx.arc(0, 0, size * 0.18, 0, Math.PI * 2);
-  dstCtx.fillStyle = '#993556';
-  dstCtx.fill();
-
-  dstCtx.restore();
 }
 
 const srcCanvas = document.getElementById('srcCanvas');
@@ -116,9 +95,9 @@ function selectFilter(name) {
   const kernelSection = document.getElementById('kernel-inputs');
   const brightnessSection = document.getElementById('brightness-control');
 
-  if (name === 'ribbon') {
-    document.getElementById('kernel-inputs').style.display = 'none';
-    document.getElementById('brightness-control').style.display = 'none';
+  if (f.type === 'face') {
+    kernelSection.style.display = 'none';
+    brightnessSection.style.display = 'none';
     applyRibbonFilter();
     return;
   }
@@ -171,7 +150,7 @@ function applyFilter() {
   const f = FILTERS[currentFilter];
   if (f.type === 'conv') {
     applyConvolution();
-  } else {
+  } else if (f.type === 'color') {
     applyColorFilter(currentFilter);
   }
 }
