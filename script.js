@@ -9,7 +9,7 @@ const FILTERS = {
   brightness: { type: 'color', desc: '슬라이더로 밝기와 대비를 직접 조절해보세여' },
 };
 
-const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights';
 let modelsLoaded = false;
 
 async function loadModels() {
