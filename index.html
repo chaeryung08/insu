@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>이미지 필터</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
 <body>
-
   <div class="header">
     <img src="images/rilakkuma.png" alt="리락쿠마">
     <h1>이미지 필터</h1>
@@ -19,16 +17,24 @@
     <input type="file" id="upload" accept="image/*">
   </div>
 
+  <div class="filter-buttons">
+    <button data-name="ribbon">리본 필터 (얼굴 인식)</button>
+    <button data-name="edge">엣지 검출</button>
+    <button data-name="blur">블러</button>
+    <button data-name="sharpen">샤프닝</button>
+    <button data-name="grayscale">흑백</button>
+    <button data-name="sepia">세피아</button>
+    <button data-name="invert">색상 반전</button>
+    <button data-name="brightness">밝기/대비</button>
+  </div>
+
   <div class="card">
-
-<div id="brightness-control" style="display:none; margin-top: 14px;">
-  <label style="font-size: 13px; color: #8B5E3C; font-weight: 600;">밝기</label>
-  <input type="range" id="brightness-slider" min="-100" max="100" value="0" style="width: 100%;">
-
-  <label style="font-size: 13px; color: #8B5E3C; font-weight: 600; margin-top: 10px; display: block;">대비</label>
-  <input type="range" id="contrast-slider" min="-100" max="100" value="0" style="width: 100%;">
-</div>
-    
+    <div id="brightness-control" style="display:none; margin-top: 14px;">
+      <label style="font-size: 13px; color: #8B5E3C; font-weight: 600;">밝기</label>
+      <input type="range" id="brightness-slider" min="-100" max="100" value="0" style="width: 100%;">
+      <label style="font-size: 13px; color: #8B5E3C; font-weight: 600; margin-top: 10px; display: block;">대비</label>
+      <input type="range" id="contrast-slider" min="-100" max="100" value="0" style="width: 100%;">
+    </div>
 
     <div class="kernel-edit" id="kernel-inputs"></div>
 
@@ -36,16 +42,7 @@
       필터를 선택해보세요.
     </div>
   </div>
-<div class="filter-buttons">
-  <button data-name="ribbon">리본 필터 (얼굴 인식)</button>
-  <button data-name="edge">엣지 검출</button>
-  <button data-name="blur">블러</button>
-  <button data-name="sharpen">샤프닝</button>
-  <button data-name="grayscale">흑백</button>
-  <button data-name="sepia">세피아</button>
-  <button data-name="invert">색상 반전</button>
-  <button data-name="brightness">밝기/대비</button>
-</div>
+
   <div class="canvas-row">
     <div class="canvas-panel">
       <div class="label">원본</div>
