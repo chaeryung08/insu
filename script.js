@@ -1,11 +1,11 @@
 const FILTERS = {
-  edge:       { type: 'conv', k: [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]], divisor: 1, desc: '경계선을 강조하는 필터입니다.' },
-  blur:       { type: 'conv', k: [[1,1,1],[1,1,1],[1,1,1]],          divisor: 9, desc: '주변 9칸의 평균을 구해 이미지를 흐립니다.' },
-  sharpen:    { type: 'conv', k: [[0,-1,0],[-1,5,-1],[0,-1,0]],      divisor: 1, desc: '중심 픽셀을 강조해 윤곽을 선명하게 만듭니다.' },
+  edge:       { type: 'conv', k: [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]], divisor: 1, desc: '경계선을 강조하는 필터입니다' },
+  blur:       { type: 'conv', k: [[1,1,1],[1,1,1],[1,1,1]],          divisor: 9, desc: '주변 9칸의 평균을 구해서 이미지를 흐립니다' },
+  sharpen:    { type: 'conv', k: [[0,-1,0],[-1,5,-1],[0,-1,0]],      divisor: 1, desc: '윤곽을 선명하게 만듭니다' },
   grayscale:  { type: 'color', desc: 'R,G,B를 가중 평균하여 흑백으로 만듭니다 (회색 = R×0.299 + G×0.587 + B×0.114).' },
-  sepia:      { type: 'color', desc: '옛 사진처럼 갈색 톤을 입히는 필터입니다.' },
-  invert:     { type: 'color', desc: '모든 색상값을 255에서 뺀 값으로 바꿔 색을 반전시킵니다.' },
-  brightness: { type: 'color', desc: '슬라이더로 밝기와 대비를 직접 조절해보세요.' },
+  sepia:      { type: 'color', desc: '리락쿠마처럼 갈색 톤을 입히는 필터입니다 ㅎㅎ' },
+  invert:     { type: 'color', desc: '모든 색상값을 255에서 뺀 값으로 바꿔 색을 반전시킵니다' },
+  brightness: { type: 'color', desc: '슬라이더로 밝기와 대비를 직접 조절해보세여' },
 };
 
 const srcCanvas = document.getElementById('srcCanvas');
