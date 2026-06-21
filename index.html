@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>이미지 필터</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>이미지 필터</h1>
+
+  <input type="file" id="upload" accept="image/*">
+
+  <div class="filter-buttons">
+    <button data-name="edge">엣지 검출</button>
+    <button data-name="blur">블러</button>
+    <button data-name="sharpen">샤프닝</button>
+  </div>
+
+  <div class="canvas-row">
+    <canvas id="srcCanvas" width="300" height="300"></canvas>
+    <canvas id="dstCanvas" width="300" height="300"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
