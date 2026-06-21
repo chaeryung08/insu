@@ -4,69 +4,165 @@
 
 body {
   font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif;
-  background: #f5f4ef;
-  color: #2c2c2a;
+  background: #FFF8EF;
+  color: #5C4530;
   margin: 0;
   padding: 24px 16px 60px;
   max-width: 800px;
   margin: 0 auto;
 }
 
-h1 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
 }
 
-/* 업로드 버튼 */
+.header img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: #6B4226;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #A47C5A;
+  margin: 8px 0 24px;
+}
+
+.upload-area {
+  background: #F5E6D3;
+  border: 2px dashed #E8C19A;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 input[type="file"] {
   font-size: 14px;
-  margin-bottom: 20px;
-  display: block;
+  margin-top: 8px;
 }
 
-/* 필터 버튼 영역 */
-.filter-buttons {
+.sample-buttons {
   display: flex;
   gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
-.filter-buttons button {
+.filter-buttons button,
+.sample-buttons button,
+.btn {
   font-size: 13px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1.5px solid #e3e1d8;
-  background: #faf9f5;
-  color: #6b6a63;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #E8C19A;
+  background: #FFF8EF;
+  color: #8B5E3C;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.filter-buttons button:hover {
-  border-color: #b4b2a6;
-  background: #f0efe9;
+.filter-buttons button:hover,
+.sample-buttons button:hover,
+.btn:hover {
+  background: #F5E6D3;
+  border-color: #D9A66C;
+  transform: translateY(-1px);
 }
 
-/* 선택된 필터 버튼 표시용 (JS에서 .active 클래스 토글) */
 .filter-buttons button.active {
-  background: #eeedfe;
-  border-color: #7f77dd;
-  color: #3c3489;
-  font-weight: 600;
+  background: #8B5E3C;
+  border-color: #8B5E3C;
+  color: #FFF8EF;
 }
 
-/* 캔버스 두 개 나란히 배치 */
 .canvas-row {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.canvas-panel {
+  text-align: center;
+}
+
+.canvas-panel .label {
+  font-size: 13px;
+  color: #A47C5A;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 canvas {
-  border: 1px solid #e3e1d8;
-  border-radius: 10px;
-  background: #f0efe9;
+  border: 3px solid #E8C19A;
+  border-radius: 16px;
+  background: #FFF8EF;
   max-width: 100%;
+}
+
+.card {
+  background: #FFFFFF;
+  border: 2px solid #F0DCC0;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.desc-box {
+  background: #F5E6D3;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #6B4226;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.desc-box b {
+  color: #8B5E3C;
+}
+
+.kernel-edit {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 46px);
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.kc {
+  width: 46px;
+  height: 38px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  border: 2px solid #E8C19A;
+  border-radius: 10px;
+  background: #FFF8EF;
+  color: #6B4226;
+}
+
+.kc:focus {
+  outline: none;
+  border-color: #8B5E3C;
+  background: #FFFFFF;
 }
