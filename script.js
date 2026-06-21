@@ -1,7 +1,11 @@
 const FILTERS = {
-  edge:    { k: [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]], divisor: 1, desc: '경계선을 강조하는 필터입니다. 주변 픽셀과 값이 다른 부분(경계선)에서 큰 값이 나옵니다.' },
-  blur:    { k: [[1,1,1],[1,1,1],[1,1,1]],          divisor: 9, desc: '주변 9칸의 평균을 구해 이미지를 부드럽게 흐립니다.' },
-  sharpen: { k: [[0,-1,0],[-1,5,-1],[0,-1,0]],      divisor: 1, desc: '중심 픽셀을 강조하여 윤곽을 더 선명하게 만듭니다.' },
+  edge:       { type: 'conv', k: [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]], divisor: 1, desc: '경계선을 강조하는 필터입니다.' },
+  blur:       { type: 'conv', k: [[1,1,1],[1,1,1],[1,1,1]],          divisor: 9, desc: '주변 9칸의 평균을 구해 이미지를 흐립니다.' },
+  sharpen:    { type: 'conv', k: [[0,-1,0],[-1,5,-1],[0,-1,0]],      divisor: 1, desc: '중심 픽셀을 강조해 윤곽을 선명하게 만듭니다.' },
+  grayscale:  { type: 'color', desc: 'R,G,B를 가중 평균하여 흑백으로 만듭니다 (회색 = R×0.299 + G×0.587 + B×0.114).' },
+  sepia:      { type: 'color', desc: '옛 사진처럼 갈색 톤을 입히는 필터입니다.' },
+  invert:     { type: 'color', desc: '모든 색상값을 255에서 뺀 값으로 바꿔 색을 반전시킵니다.' },
+  brightness: { type: 'color', desc: '슬라이더로 밝기와 대비를 직접 조절해보세요.' },
 };
 
 const srcCanvas = document.getElementById('srcCanvas');
@@ -10,10 +14,8 @@ const srcCtx = srcCanvas.getContext('2d');
 const dstCtx = dstCanvas.getContext('2d');
 
 let srcImageData = null;
-let currentKernel = null;
-let currentDivisor = 1;
+let currentFilter = null;
 
-// 이미지 업로드
 document.getElementById('upload').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -23,11 +25,11 @@ document.getElementById('upload').addEventListener('change', (e) => {
     srcCtx.drawImage(img, 0, 0, 300, 300);
     srcImageData = srcCtx.getImageData(0, 0, 300, 300);
     dstCtx.clearRect(0, 0, 300, 300);
+    if (currentFilter) applyFilter();
   };
   img.src = URL.createObjectURL(file);
 });
 
-// 필터 버튼 클릭
 document.querySelectorAll('.filter-buttons button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-buttons button').forEach(b => b.classList.remove('active'));
@@ -36,19 +38,40 @@ document.querySelectorAll('.filter-buttons button').forEach(btn => {
   });
 });
 
-function selectFilter(name) {
-  const f = FILTERS[name];
-  currentKernel = f.k.map(row => [...row]);
-  currentDivisor = f.divisor;
+document.getElementById('brightness-slider').addEventListener('input', applyFilter);
+document.getElementById('contrast-slider').addEventListener('input', applyFilter);
 
+function selectFilter(name) {
+  currentFilter = name;
+  const f = FILTERS[name];
   document.getElementById('filter-desc').innerHTML = '<b>' + name + ':</b> ' + f.desc;
 
-  buildKernelUI();
-  applyConvolution();
+  const kernelSection = document.getElementById('kernel-inputs');
+  const brightnessSection = document.getElementById('brightness-control');
+
+  if (f.type === 'conv') {
+    kernelSection.style.display = 'inline-grid';
+    brightnessSection.style.display = 'none';
+    buildKernelUI(f.k);
+  } else if (name === 'brightness') {
+    kernelSection.style.display = 'none';
+    brightnessSection.style.display = 'block';
+  } else {
+    kernelSection.style.display = 'none';
+    brightnessSection.style.display = 'none';
+  }
+
+  applyFilter();
 }
 
-// 필터 행렬 입력칸 만들기 (3번 문제 해결)
-function buildKernelUI() {
+let currentKernel = null;
+let currentDivisor = 1;
+
+function buildKernelUI(kernel) {
+  currentKernel = kernel.map(row => [...row]);
+  const f = FILTERS[currentFilter];
+  currentDivisor = f.divisor;
+
   const container = document.getElementById('kernel-inputs');
   container.innerHTML = '';
   for (let i = 0; i < 3; i++) {
@@ -60,28 +83,33 @@ function buildKernelUI() {
       input.dataset.i = i;
       input.dataset.j = j;
       input.addEventListener('input', (e) => {
-        const i = +e.target.dataset.i;
-        const j = +e.target.dataset.j;
-        currentKernel[i][j] = parseFloat(e.target.value) || 0;
-        applyConvolution();
+        currentKernel[+e.target.dataset.i][+e.target.dataset.j] = parseFloat(e.target.value) || 0;
+        applyFilter();
       });
       container.appendChild(input);
     }
   }
 }
 
-// 합성곱 연산 (2번 문제 해결: divisor로 나눠줌)
-function applyConvolution() {
-  if (!srcImageData || !currentKernel) return;
+function applyFilter() {
+  if (!srcImageData || !currentFilter) return;
 
+  const f = FILTERS[currentFilter];
+  if (f.type === 'conv') {
+    applyConvolution();
+  } else {
+    applyColorFilter(currentFilter);
+  }
+}
+
+function applyConvolution() {
   const { width: w, height: h, data: src } = srcImageData;
   const dst = dstCtx.createImageData(w, h);
-  dst.data.set(src.data ? src.data : src);
+  dst.data.set(src);
 
   for (let y = 1; y < h - 1; y++) {
     for (let x = 1; x < w - 1; x++) {
       let r = 0, g = 0, b = 0;
-
       for (let m = -1; m <= 1; m++) {
         for (let n = -1; n <= 1; n++) {
           const idx = ((y + m) * w + (x + n)) * 4;
@@ -91,13 +119,47 @@ function applyConvolution() {
           b += src[idx + 2] * kVal;
         }
       }
-
       const di = (y * w + x) * 4;
       dst.data[di]     = clamp(r / currentDivisor);
       dst.data[di + 1] = clamp(g / currentDivisor);
       dst.data[di + 2] = clamp(b / currentDivisor);
       dst.data[di + 3] = 255;
     }
+  }
+  dstCtx.putImageData(dst, 0, 0);
+}
+
+function applyColorFilter(name) {
+  const { width: w, height: h, data: src } = srcImageData;
+  const dst = dstCtx.createImageData(w, h);
+
+  const brightness = +document.getElementById('brightness-slider').value;
+  const contrast = +document.getElementById('contrast-slider').value;
+  const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+  for (let i = 0; i < src.length; i += 4) {
+    let r = src[i], g = src[i + 1], b = src[i + 2];
+
+    if (name === 'grayscale') {
+      const gray = r * 0.299 + g * 0.587 + b * 0.114;
+      r = g = b = gray;
+    } else if (name === 'sepia') {
+      const tr = r * 0.393 + g * 0.769 + b * 0.189;
+      const tg = r * 0.349 + g * 0.686 + b * 0.168;
+      const tb = r * 0.272 + g * 0.534 + b * 0.131;
+      r = tr; g = tg; b = tb;
+    } else if (name === 'invert') {
+      r = 255 - r; g = 255 - g; b = 255 - b;
+    } else if (name === 'brightness') {
+      r = contrastFactor * (r - 128) + 128 + brightness;
+      g = contrastFactor * (g - 128) + 128 + brightness;
+      b = contrastFactor * (b - 128) + 128 + brightness;
+    }
+
+    dst.data[i]     = clamp(r);
+    dst.data[i + 1] = clamp(g);
+    dst.data[i + 2] = clamp(b);
+    dst.data[i + 3] = 255;
   }
   dstCtx.putImageData(dst, 0, 0);
 }
