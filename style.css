@@ -1,0 +1,72 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif;
+  background: #f5f4ef;
+  color: #2c2c2a;
+  margin: 0;
+  padding: 24px 16px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* 업로드 버튼 */
+input[type="file"] {
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* 필터 버튼 영역 */
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-buttons button {
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1.5px solid #e3e1d8;
+  background: #faf9f5;
+  color: #6b6a63;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-buttons button:hover {
+  border-color: #b4b2a6;
+  background: #f0efe9;
+}
+
+/* 선택된 필터 버튼 표시용 (JS에서 .active 클래스 토글) */
+.filter-buttons button.active {
+  background: #eeedfe;
+  border-color: #7f77dd;
+  color: #3c3489;
+  font-weight: 600;
+}
+
+/* 캔버스 두 개 나란히 배치 */
+.canvas-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+canvas {
+  border: 1px solid #e3e1d8;
+  border-radius: 10px;
+  background: #f0efe9;
+  max-width: 100%;
+}
