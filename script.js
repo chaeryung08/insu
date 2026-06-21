@@ -40,9 +40,9 @@ async function applyRibbonFilter() {
 
   detections.forEach(det => {
     const box = det.box;
-    const ribbonX = box.x + box.width / 2;
+    const ribbonX = box.x + box.width / 2 + box.width *0.3;
     const ribbonY = box.y - box.height * 0.05;
-    const fontSize = box.width * 0.5;
+    const fontSize = box.width * 0.3;
 
     dstCtx.font = fontSize + 'px sans-serif';
     dstCtx.textAlign = 'center';
