@@ -8,6 +8,73 @@ const FILTERS = {
   brightness: { type: 'color', desc: '슬라이더로 밝기와 대비를 직접 조절해보세여' },
 };
 
+const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+let modelsLoaded = false;
+
+async function loadModels() {
+  if (modelsLoaded) return;
+  await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+  modelsLoaded = true;
+}
+
+async function applyRibbonFilter() {
+  await loadModels();
+
+  document.getElementById('filter-desc').innerHTML =
+    '<b>ribbon:</b> CNN 기반 얼굴 인식 모델(TinyFaceDetector)이 얼굴 위치를 찾는 중입니다...';
+
+  const detections = await faceapi.detectAllFaces(
+    srcCanvas,
+    new faceapi.TinyFaceDetectorOptions()
+  );
+
+  dstCtx.clearRect(0, 0, dstCanvas.width, dstCanvas.height);
+  dstCtx.drawImage(srcCanvas, 0, 0);
+
+  if (detections.length === 0) {
+    document.getElementById('filter-desc').innerHTML =
+      '<b>ribbon:</b> 얼굴을 찾지 못했어요. 얼굴이 잘 보이는 이미지를 올려보세요.';
+    return;
+  }
+
+  detections.forEach(det => {
+    const box = det.box;
+    const ribbonX = box.x + box.width / 2;
+    const ribbonY = box.y - box.height * 0.12;
+    const ribbonSize = box.width * 0.35;
+    drawRibbon(ribbonX, ribbonY, ribbonSize);
+  });
+
+  document.getElementById('filter-desc').innerHTML =
+    '<b>ribbon:</b> 얼굴 ' + detections.length + '개를 인식해서 리본을 달았어요. (TinyFaceDetector는 MobileNet 기반의 경량 CNN입니다)';
+}
+
+function drawRibbon(x, y, size) {
+  dstCtx.save();
+  dstCtx.translate(x, y);
+
+  dstCtx.fillStyle = '#D4537E';
+
+  dstCtx.beginPath();
+  dstCtx.moveTo(0, 0);
+  dstCtx.quadraticCurveTo(-size, -size * 0.7, -size * 0.9, 0);
+  dstCtx.quadraticCurveTo(-size * 0.5, size * 0.25, 0, 0);
+  dstCtx.fill();
+
+  dstCtx.beginPath();
+  dstCtx.moveTo(0, 0);
+  dstCtx.quadraticCurveTo(size, -size * 0.7, size * 0.9, 0);
+  dstCtx.quadraticCurveTo(size * 0.5, size * 0.25, 0, 0);
+  dstCtx.fill();
+
+  dstCtx.beginPath();
+  dstCtx.arc(0, 0, size * 0.18, 0, Math.PI * 2);
+  dstCtx.fillStyle = '#993556';
+  dstCtx.fill();
+
+  dstCtx.restore();
+}
+
 const srcCanvas = document.getElementById('srcCanvas');
 const dstCanvas = document.getElementById('dstCanvas');
 const srcCtx = srcCanvas.getContext('2d');
@@ -48,6 +115,13 @@ function selectFilter(name) {
 
   const kernelSection = document.getElementById('kernel-inputs');
   const brightnessSection = document.getElementById('brightness-control');
+
+  if (name === 'ribbon') {
+    document.getElementById('kernel-inputs').style.display = 'none';
+    document.getElementById('brightness-control').style.display = 'none';
+    applyRibbonFilter();
+    return;
+  }
 
   if (f.type === 'conv') {
     kernelSection.style.display = 'inline-grid';
